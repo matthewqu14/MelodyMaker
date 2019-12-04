@@ -31,7 +31,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-db = sqlite3.connect("users.db")
+db = SQL("sqlite:///users.db")
 db.execute("""CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL,
@@ -44,7 +44,7 @@ def make_session_permanent():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+        return render_template("index.html")
 
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -52,12 +52,6 @@ def index():
 def buy():
     """Buy shares of stock"""
     return apology("TODO")
-
-
-@app.route("/homepage")
-@login_required
-def homepage():
-    return render_template("homepage.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -90,7 +84,7 @@ def login():
 
         # Redirect user to home page
         flash("You have successfully logged in.")
-        return redirect("/homepage")
+        return redirect("/")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -142,8 +136,17 @@ def register():
             flash("Username already taken.")
             return redirect("/register")
         db.execute("INSERT INTO users (username, hash) VALUES (?, ?)", username, generate_password_hash(password))
+        rows = db.execute("SELECT * FROM users WHERE username = :username",
+                          username=request.form.get("username"))
+        session["user_id"] = rows[0]["id"]
         flash("TODO")
         return redirect("/")
+
+
+@app.route("/confirmation")
+@login_required
+def confirmation():
+    return render_template
 
 
 @app.route("/sell", methods=["GET", "POST"])

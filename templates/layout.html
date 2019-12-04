@@ -27,11 +27,7 @@
     <body>
 
         <nav class="navbar navbar-expand-md navbar-light bg-light border">
-            {% if session.user_id %}
-                <a class="navbar-brand" href="/homepage">MelodyMaker</a>
-            {% else %}
-                <a class="navbar-brand" href="/">MelodyMaker</a>
-            {% endif %}
+            <a class="navbar-brand" href="/">MelodyMaker</a>
             <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
                 <span class="navbar-toggler-icon"></span>
             </button>
