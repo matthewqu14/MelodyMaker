@@ -58,13 +58,6 @@ def index():
         return render_template("index.html")
 
 
-@app.route("/buy", methods=["GET", "POST"])
-@login_required
-def buy():
-    """Buy shares of stock"""
-    return apology("TODO")
-
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
@@ -118,9 +111,16 @@ def logout():
     return redirect("/")
 
 
-@app.route("/quote", methods=["GET", "POST"])
+@app.route("/myaudio", methods=["GET", "POST"])
 @login_required
-def quote():
+def myaudio():
+    """Get stock quote."""
+    return apology("TODO")
+
+
+@app.route("/mysheet", methods=["GET", "POST"])
+@login_required
+def mysheet():
     """Get stock quote."""
     return apology("TODO")
 
@@ -182,13 +182,6 @@ def confirm(token):
     db.execute("UPDATE users SET confirmation = true WHERE id = ?", tempid)
     session["user_id"] = tempid
     return render_template("welcome.html")
-
-
-@app.route("/sell", methods=["GET", "POST"])
-@login_required
-def sell():
-    """Sell shares of stock"""
-    return apology("TODO")
 
 
 def errorhandler(e):
