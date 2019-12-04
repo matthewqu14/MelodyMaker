@@ -1,4 +1,4 @@
-# LiveComposition
+# MelodyMaker
 Final Project for CS50
 
 ## Contributors

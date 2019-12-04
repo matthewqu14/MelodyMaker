@@ -2,7 +2,7 @@ import re, os
 
 import sqlite3
 from cs50 import SQL
-from flask import Flask, flash, jsonify, redirect, render_template, request, session
+from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
@@ -31,7 +31,12 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///main.users [users]")
+db = sqlite3.connect("users.db")
+db.execute("""CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            hash TEXT NOT NULL,
+            confirmation BOOLEAN DEFAULT false);""")
 
 @app.before_request
 def make_session_permanent():
@@ -137,6 +142,7 @@ def register():
             flash("Username already taken.")
             return redirect("/register")
         db.execute("INSERT INTO users (username, hash) VALUES (?, ?)", username, generate_password_hash(password))
+        flash("TODO")
         return redirect("/")
 
 
