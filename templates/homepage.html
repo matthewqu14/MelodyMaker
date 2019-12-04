@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    MelodyMaker
+{% endblock %}
+
+{% block main %}
+    <div class="slide-container">
+        <input type="range" class="slider" id="bpm" min="40" max="208" value="100">
+        <p class="tempo">Tempo: <a id="bpm_num"></a> BPM</p>
+        <p id="flash">test</p>
+    </div>
+    <script>
+        var slider = document.getElementById("bpm");
+        var output = document.getElementById("bpm_num");
+        var f = document.getElementById("flash");
+        output.innerHTML = slider.value;
+        setInterval(function() {
+          f.style.display = (f.style.display == 'none' ? '' : 'none');
+        }, 500 / (parseFloat(output.innerHTML) / 60.0));
+        slider.oninput = function() {
+            output.innerHTML = slider.value;
+            setInterval(function() {
+              f.style.display = (f.style.display == 'none' ? '' : 'none');
+            }, 500 / (parseFloat(output.innerHTML) / 60.0));
+        }
+    </script>
+{% endblock %}
