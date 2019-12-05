@@ -9,26 +9,22 @@
         <div class="slide-container">
             <input type="range" class="slider" id="bpm" min="40" max="208" value="100">
             <p class="tempo">Tempo: <a id="bpm_num"></a> BPM</p>
-            <p id="flash">test</p>
+            <!-- <p id="flash">test</p> -->
+            <select class="form-control" name="timesgn">
+                <option disabled selected value>Time Signature</option>
+                <option>4/4</option>
+                <option>3/4</option>
+                <option>2/4</option>
+                <option>2/2</option>
+                <option>6/8</option>
+            </select>
         </div>
+        <br>
         <div>
-        <input type="file" accept="audio/*" capture>
+        <input type="file" accept="audio/*" capture id="recorder">
+        <audio id="player" controls></audio>
         </div>
-        <script>
-            var slider = document.getElementById("bpm");
-            var output = document.getElementById("bpm_num");
-            var f = document.getElementById("flash");
-            output.innerHTML = slider.value;
-            setInterval(function() {
-                f.style.display = (f.style.display == 'none' ? '' : 'none');
-            }, 500 / (parseFloat(output.innerHTML) / 60.0));
-            slider.oninput = function() {
-                output.innerHTML = slider.value;
-                setInterval(function() {
-                    f.style.display = (f.style.display == 'none' ? '' : 'none');
-                }, 500 / (parseFloat(output.innerHTML) / 60.0));
-            }
-        </script>
+        <script src="./main.js"></script>
     {% else %}
         <p>
             Homepage for non-logged in users.

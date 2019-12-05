@@ -41,13 +41,18 @@ Session(app)
 
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///users.db")
+db2 = SQL("sqlite:///audio.db")
 db.execute("""CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL,
             hash TEXT NOT NULL,
             confirmation BOOLEAN DEFAULT false);""")
+db2.execute("""CREATE TABLE IF NOT EXISTS audio (
+                user_id INTEGER,
+                audio_url TEXT NOT NULL,
+                time DATETIME NOT NULL);""")
 
-db.execute("DELETE FROM users WHERE username = ?", "muffinmatt8@gmail.com")
+
 @app.before_request
 def make_session_permanent():
     session.permanent = True
@@ -114,14 +119,17 @@ def logout():
 @app.route("/myaudio", methods=["GET", "POST"])
 @login_required
 def myaudio():
-    """Get stock quote."""
-    return apology("TODO")
+    if request.method == "POST":
+        return apology("TODO")
+    else:
+        db2.execute("INSERT INTO audio (user_id, audio_url) VALUES (?, ?)", session['user_id'], "C:\\Users\\matth\\Music\\C5")
+        rows = db2.execute("SELECT * FROM audio WHERE user_id = ?", session['user_id'])
+        return render_template("myaudio.html", rows=rows, id=session['user_id'])
 
 
 @app.route("/mysheet", methods=["GET", "POST"])
 @login_required
 def mysheet():
-    """Get stock quote."""
     return apology("TODO")
 
 
