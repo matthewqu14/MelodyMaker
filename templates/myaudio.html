@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    My Audio Files - MelodyMaker
+{% endblock %}
+
+{% block main %}
+    {% if rows %}
+        <table class="table">
+            <tr>
+                <th>Audio File</th>
+                <th>Date Created</th>
+                <th></th>
+                <th></th>
+            </tr>
+            {% for row in rows %}
+            <tr>
+                <td><button>Delete</button></td>
+                <td>{{ row["audio_url"] }}</td>
+                <td>{{ row["time"] }}</td>
+                <td><button>Transcribe</button></td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>Id is {{ id }}</p>
+        <p>{{ rows }}</p>
+        <h1>You have no saved audio files. Go make one!</h1>
+    {% endif %}
+{% endblock %}
