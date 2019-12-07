@@ -20,3 +20,8 @@ Final Project for CS50
 * Use [VexFlow](http://www.vexflow.com/)
 and [OpenSheetMusicDisplay](https://github.com/opensheetmusicdisplay)
 for notation (which could be expanded upon later on)
+
+## Installation
+To install torch input \
+`pip3 install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html
+`

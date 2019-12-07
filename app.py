@@ -7,14 +7,23 @@ from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
+from audio2midi.audio2midi import main
+import subprocess
 
 from helpers import apology, login_required
 
 # Configure application
 app = Flask(__name__)
 
+# variables
+UPLOAD_FOLDER = './audio2midi/input'
+ALLOWED_EXTENSIONS = {'wav', 'mp3'}
+
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 # Ensure responses aren't cached
 @app.after_request
@@ -23,6 +32,7 @@ def after_request(response):
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
     return response
+
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
@@ -38,13 +48,15 @@ db.execute("""CREATE TABLE IF NOT EXISTS users (
             hash TEXT NOT NULL,
             confirmation BOOLEAN DEFAULT false);""")
 
+
 @app.before_request
 def make_session_permanent():
     session.permanent = True
 
+
 @app.route("/")
 def index():
-        return render_template("index.html")
+    return render_template("index.html")
 
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -154,6 +166,54 @@ def confirmation():
 def sell():
     """Sell shares of stock"""
     return apology("TODO")
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route('/audio', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            songname = filename.split('.wav')[0]
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            main('./audio2midi/input/' + filename,
+                 './audio2midi/model/model_melody',
+                 './audio2midi/output/' + songname,
+                 170)
+            os.chdir("./audio2midi/output")
+            subprocess.check_call(
+                [
+                    "C:\\Program Files\\MuseScore 3\\bin\\MuseScore3.exe",
+                    "-o",
+                    songname + ".musicxml",
+                    songname + ".mid"
+                ]
+            )
+            os.chdir("./../..")
+            return redirect("/audio")
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+    '''
 
 
 def errorhandler(e):
