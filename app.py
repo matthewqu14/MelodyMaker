@@ -63,13 +63,50 @@ db2.execute("""CREATE TABLE IF NOT EXISTS audio (
                 time DATETIME NOT NULL);""")
 
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 @app.before_request
 def make_session_permanent():
     session.permanent = True
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part.')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            flash('Please select a file.')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            songname = filename.split('.wav')[0]
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            main('./audio2midi/input/' + filename,
+                 './audio2midi/model/model_melody',
+                 './audio2midi/output/' + songname)
+            os.chdir("./audio2midi/output")
+            subprocess.check_call(
+                [
+                    "C:\\Program Files\\MuseScore 3\\bin\\MuseScore3.exe",
+                    "-o",
+                    songname + ".musicxml",
+                    songname + ".mid"
+                ]
+            )
+            os.chdir("./../..")
+            return render_template("sheetmusic.html")
+        else:
+            flash("Please select a .wav file.")
+            return redirect("/")
     return render_template("index.html")
 
 
@@ -133,7 +170,7 @@ def myaudio():
         return apology("TODO")
     else:
         db2.execute("INSERT INTO audio (user_id, audio_url) VALUES (?, ?)", session['user_id'],
-                    "C:\\Users\\matth\\Music\\C5")
+                    "C:\\Users\\matth\\Music\\C5") #this isn't working
         rows = db2.execute("SELECT * FROM audio WHERE user_id = ?", session['user_id'])
         return render_template("myaudio.html", rows=rows, id=session['user_id'])
 
@@ -201,70 +238,6 @@ def confirm(token):
     db.execute("UPDATE users SET confirmation = true WHERE id = ?", tempid)
     session["user_id"] = tempid
     return render_template("welcome.html")
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-@app.route('/audio', methods=['GET', 'POST'])
-def upload_file():
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            songname = filename.split('.wav')[0]
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            main('./audio2midi/input/' + filename,
-                 './audio2midi/model/model_melody',
-                 './audio2midi/output/' + songname)
-            os.chdir("./audio2midi/output")
-            subprocess.check_call(
-                [
-                    "C:\\Program Files\\MuseScore 3\\bin\\MuseScore3.exe",
-                    "-o",
-                    songname + ".musicxml",
-                    songname + ".mid"
-                ]
-            )
-            os.chdir("./../..")
-            return '''
-            <html>
-            <head>
-                <title> OSMD Raw Javascript Usage Example </title>
-            </head>
-            <body>
-            
-            <script src="static/opensheetmusicdisplay.min.js"></script> <!-- you need to provide the .js file, see README.md-->
-            <div id="osmdCanvas"/>
-            
-            <input type="file" id="files" name="files[]" multiple />
-            <output id="list"></output>
-            
-            <script src="static/fileSelectAndLoadOSMD.js"></script>
-            
-            </body>
-            </html>
-            '''
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    '''
 
 
 def errorhandler(e):

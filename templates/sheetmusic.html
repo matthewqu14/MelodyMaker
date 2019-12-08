@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    MelodyMaker
+{% endblock %}
+
+{% block main %}
+    <!-- <script src="/static/opensheetmusicdisplay.min.js"></script> you need to provide the .js file, see README.md-->
+    <div id="osmdCanvas"/>
+
+    <input type="file" id="files" name="files[]" multiple />
+    <output id="list"></output>
+
+    <audio id="midi" controls></audio>
+
+    {% block javascript %}
+        <script src="{{ url_for('static',filename='opensheetmusicdisplay.min.js') }}"></script>
+        <script src="{{ url_for('static',filename='fileSelectAndLoadOSMD.js') }}"></script>
+    {% endblock %}
+
+    <!-- <script src="/static/fileSelectAndLoadOSMD.js"></script> -->
+{% endblock %}
