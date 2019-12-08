@@ -13,12 +13,12 @@ setInterval(function() {
     }, 500 / (parseFloat(output.innerHTML) / 60.0));
 };
 
-const recorder = document.getElementById('recorder');
-const player = document.getElementById('player');
+const fileAudio = document.getElementById('fileAudio');
+const player1 = document.getElementById('player1');
 
-recorder.addEventListener('change', function(e) {
+fileAudio.addEventListener('change', function(e) {
 const file = e.target.files[0];
 const url = URL.createObjectURL(file);
 // Do something with the audio file.
-player.src = url;
+player1.src = url;
 });

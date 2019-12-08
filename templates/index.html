@@ -13,18 +13,30 @@
         </div>
         <br>
         <div>
-        <form method=post enctype=multipart/form-data>
-            <input type="file" name="file" id="recorder">
-            <input type=submit value=Upload>
-        </form>
-        <br>
-        <audio id="player" controls></audio>
+            <form method=post enctype=multipart/form-data>
+                <input type="file" name="file" id="fileAudio">
+                <input type=submit value="Upload File">
+            </form>
+            <br>
+            <audio id="player1" controls></audio>
         </div>
+        <div id="controls">
+            <button id="recordButton">Record</button>
+            <button id="stopButton" disabled>Stop</button>
+        </div>
+        <h3>Log</h3>
+        <pre id="log"></pre>
+
+        <audio id="player2" controls></audio>
+        <input type="button" id="uploadButton" value="Upload Recording">
+        <!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
+        <script src="{{ url_for('static',filename='WebAudioRecorder.min.js') }}"></script>
+        <script src="{{ url_for('static',filename='recorder.js') }}"></script>
         <script src="{{ url_for('static',filename='main.js') }}"></script>
     {% else %}
         <p>
             Homepage for non-logged in users.
         </p>
-        <a href = "/register">Register</a>
+        <a href="/register">Register</a>
     {% endif %}
 {% endblock %}

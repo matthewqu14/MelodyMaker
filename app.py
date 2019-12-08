@@ -103,11 +103,19 @@ def index():
                 ]
             )
             os.chdir("./../..")
-            return render_template("sheetmusic.html")
+            flash("Audio successfully uploaded")
+            return redirect("/renderr")
+            # return render_template("sheetmusic.html")
         else:
             flash("Please select a .wav file.")
             return redirect("/")
     return render_template("index.html")
+
+
+@app.route("/render", methods=["GET"])
+@login_required
+def render():
+    return render_template("sheetmusic.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -170,7 +178,7 @@ def myaudio():
         return apology("TODO")
     else:
         db2.execute("INSERT INTO audio (user_id, audio_url) VALUES (?, ?)", session['user_id'],
-                    "C:\\Users\\matth\\Music\\C5") #this isn't working
+                    "C:\\Users\\matth\\Music\\C5")  # this isn't working
         rows = db2.execute("SELECT * FROM audio WHERE user_id = ?", session['user_id'])
         return render_template("myaudio.html", rows=rows, id=session['user_id'])
 
