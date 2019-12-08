@@ -201,7 +201,7 @@ def seq2roll(seq):
 
 
 def write_midi(filepath, pianorolls, program_nums=None, is_drums=None,
-               track_names=None, velocity=100, tempo=170.0, beat_resolution=16):
+               track_names=None, velocity=100, tempo=162.0, beat_resolution=16):
     # if not os.path.exists(filepath):
     #    os.makedirs(filepath)
 
@@ -237,7 +237,7 @@ def write_midi(filepath, pianorolls, program_nums=None, is_drums=None,
     multitrack.write(filepath)
 
 
-def main(file_path, model_path, output_path, tempo):
+def main(file_path, model_path, output_path):
     Net = MSnet()
     Net.float()
     Net.cpu()
@@ -263,7 +263,6 @@ def main(file_path, model_path, output_path, tempo):
     print('     Melody  extraction ... Done. Time:', int(time.time() - st), '(s)')
 
     rolls = seq2roll(est_arr[:, 1])
-    write_midi(output_path + '.mid', np.expand_dims(rolls.astype(bool), 2), program_nums=[0], is_drums=[False],
-               tempo=tempo)
+    write_midi(output_path + '.mid', np.expand_dims(rolls.astype(bool), 2), program_nums=[0], is_drums=[False])
 
     print('Save the result in ' + output_path + '.mid')

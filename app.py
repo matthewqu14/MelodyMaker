@@ -63,7 +63,6 @@ db2.execute("""CREATE TABLE IF NOT EXISTS audio (
                 time DATETIME NOT NULL);""")
 
 
-
 @app.before_request
 def make_session_permanent():
     session.permanent = True
@@ -133,7 +132,8 @@ def myaudio():
     if request.method == "POST":
         return apology("TODO")
     else:
-        db2.execute("INSERT INTO audio (user_id, audio_url) VALUES (?, ?)", session['user_id'], "C:\\Users\\matth\\Music\\C5")
+        db2.execute("INSERT INTO audio (user_id, audio_url) VALUES (?, ?)", session['user_id'],
+                    "C:\\Users\\matth\\Music\\C5")
         rows = db2.execute("SELECT * FROM audio WHERE user_id = ?", session['user_id'])
         return render_template("myaudio.html", rows=rows, id=session['user_id'])
 
@@ -227,8 +227,7 @@ def upload_file():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             main('./audio2midi/input/' + filename,
                  './audio2midi/model/model_melody',
-                 './audio2midi/output/' + songname,
-                 170)
+                 './audio2midi/output/' + songname)
             os.chdir("./audio2midi/output")
             subprocess.check_call(
                 [
@@ -239,7 +238,24 @@ def upload_file():
                 ]
             )
             os.chdir("./../..")
-            return redirect("/audio")
+            return '''
+            <html>
+            <head>
+                <title> OSMD Raw Javascript Usage Example </title>
+            </head>
+            <body>
+            
+            <script src="static/opensheetmusicdisplay.min.js"></script> <!-- you need to provide the .js file, see README.md-->
+            <div id="osmdCanvas"/>
+            
+            <input type="file" id="files" name="files[]" multiple />
+            <output id="list"></output>
+            
+            <script src="static/fileSelectAndLoadOSMD.js"></script>
+            
+            </body>
+            </html>
+            '''
     return '''
     <!doctype html>
     <title>Upload new File</title>
