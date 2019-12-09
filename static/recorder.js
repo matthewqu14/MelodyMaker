@@ -10,12 +10,12 @@ var encodeAfterRecord = true;       // when to encode
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext; //new audio context to help us record
 
-var recordButton = document.getElementById("recordButton");
-var stopButton = document.getElementById("stopButton");
-var uploadButton = document.getElementById("uploadButton");
+const recordButton = document.getElementById("recordButton");
+const stopButton = document.getElementById("stopButton");
+const uploadButton = document.getElementById("uploadButton");
 const player2 = document.getElementById('player2');
 
-//add events to those 2 buttons
+// Add events to buttons
 recordButton.addEventListener("click", startRecording);
 stopButton.addEventListener("click", stopRecording);
 uploadButton.addEventListener("click", uploadRecording);
@@ -71,7 +71,11 @@ function startRecording() {
 
         recorder.onComplete = function (recorder, blob) {
             console.log("Encoding complete");
+
+            // Adds audio to player
             player2.src = URL.createObjectURL(blob);
+
+            // Enables upload button once audio has been added
             document.getElementById("uploadButton").disabled = false;
         }
 
@@ -116,55 +120,30 @@ function stopRecording() {
 }
 
 function uploadRecording() {
-    var formData = new FormData();
-
     // JavaScript file-like object
     fetch(player2.src)
         .then(res => res.blob()) // Gets the response and returns it as a blob
         .then(blob => {
+            // Creates request object and formdata object
             var xhr = new XMLHttpRequest();
             var fd = new FormData();
+
+            // Adds audio data and file name to formdata
             var filename = document.getElementById('filename');
             if (filename.value === "") {
                 fd.append("file", blob, "filename.wav");
-            }
-            else
-            {
+            } else {
                 fd.append("file", blob, filename.value + ".wav");
             }
+
+            // Disables button so can't upload multiple times
             document.getElementById("uploadButton").disabled = true;
+
+            // Sends post request of audio file
             xhr.open("POST", "http://127.0.0.1:5000/myaudio", false);
             xhr.send(fd);
+
+            // Opens render path
             window.location.href = "/render";
         });
 }
-
-function createDownloadLink(blob, encoding) {
-
-    var url = URL.createObjectURL(blob);
-    var au = document.createElement('audio');
-    var li = document.createElement('li');
-    var link = document.createElement('a');
-
-    //add controls to the <audio> element
-    au.controls = true;
-    au.src = url;
-
-    //link the a element to the blob
-    link.href = url;
-    link.download = new Date().toISOString() + '.' + encoding;
-    link.innerHTML = link.download;
-
-    //add the new audio and a elements to the li element
-    li.appendChild(au);
-    li.appendChild(link);
-
-    //add the li element to the ordered list
-    recordingsList.appendChild(li);
-}
-
-
-//helper function
-// function __log(e, data) {
-// 	log.innerHTML += "\n" + e + " " + (data || '');
-// }
