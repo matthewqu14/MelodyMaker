@@ -73,3 +73,39 @@ main img
 #osmdCanvas {
     width: 95%
 }
+
+.container{
+    width: 100%;
+    margin: 0 auto;
+    background: #FFFFFF;
+    font-size: 35px;
+    padding: 25px;
+}
+
+.parallax {
+    width: 100%;
+    min-height: 500px;
+    background: transparent;
+}
+
+h1 {
+font-size: 55px;
+}
+
+h2 {
+  letter-spacing: 1px;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 5em;
+  margin-right: 5em;
+  line-height: 1.3;
+  font-size: 35px;
+  margin: auto;
+}
+
+img {
+  height: auto;
+}
+
+
+
