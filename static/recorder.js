@@ -72,6 +72,7 @@ function startRecording() {
         recorder.onComplete = function (recorder, blob) {
             console.log("Encoding complete");
             player2.src = URL.createObjectURL(blob);
+            document.getElementById("uploadButton").disabled = false;
         }
 
         recorder.setOptions({
@@ -131,7 +132,8 @@ function uploadRecording() {
             {
                 fd.append("file", blob, filename.value + ".wav");
             }
-            xhr.open("POST", "http://127.0.0.1:5000/myaudio", true);
+            document.getElementById("uploadButton").disabled = true;
+            xhr.open("POST", "http://127.0.0.1:5000/myaudio", false);
             xhr.send(fd);
             window.location.href = "/render";
         });

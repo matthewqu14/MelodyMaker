@@ -14,7 +14,7 @@
             <pre id="log"></pre>
             <audio id="player2" controls></audio>
             <br>
-            <input type="button" id="uploadButton" value="Upload Recording">
+            <button id="uploadButton" disabled=true>Upload Recording</button>
         </div>
         <!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
         <script src="{{ url_for('static',filename='WebAudioRecorder.min.js') }}"></script>
