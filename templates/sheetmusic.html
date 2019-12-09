@@ -5,7 +5,6 @@
 {% endblock %}
 
 {% block main %}
-    <!-- <script src="/static/opensheetmusicdisplay.min.js"></script> you need to provide the .js file, see README.md-->
     <div id="osmdCanvas"/>
 
     <h3>Choose the corresponding MusicXML file in the output folder.</h3>
@@ -17,6 +16,4 @@
         <script src="{{ url_for('static',filename='opensheetmusicdisplay.min.js') }}"></script>
         <script src="{{ url_for('static',filename='fileSelectAndLoadOSMD.js') }}"></script>
     {% endblock %}
-
-    <!-- <script src="/static/fileSelectAndLoadOSMD.js"></script> -->
 {% endblock %}

@@ -1,17 +1,19 @@
-import re, os, datetime
+import datetime
+import os
+import re
+import subprocess
+from tempfile import mkdtemp
 
 from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, request, session, url_for
-from flask_session import Session
 from flask_mail import Mail, Message
+from flask_session import Session
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
-from audio2midi.audio2midi import main
-import subprocess
 
+from audio2midi.audio2midi import main
 from helpers import apology, login_required, allowed_file
 
 # Configure application
