@@ -11,8 +11,6 @@
     <input type="file" id="files" name="files[]" multiple />
     <output id="list"></output>
 
-    <audio id="midi" controls></audio>
-
     {% block javascript %}
         <script src="{{ url_for('static',filename='opensheetmusicdisplay.min.js') }}"></script>
         <script src="{{ url_for('static',filename='fileSelectAndLoadOSMD.js') }}"></script>

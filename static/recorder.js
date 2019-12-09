@@ -123,8 +123,15 @@ function uploadRecording() {
         .then(blob => {
             var xhr = new XMLHttpRequest();
             var fd = new FormData();
-            fd.append("file", blob, "filename.wav");
-            xhr.open("POST", "http://127.0.0.1:5000/", true);
+            var filename = document.getElementById('filename');
+            if (filename.value === "") {
+                fd.append("file", blob, "filename.wav");
+            }
+            else
+            {
+                fd.append("file", blob, filename.value + ".wav");
+            }
+            xhr.open("POST", "http://127.0.0.1:5000/myaudio", true);
             xhr.send(fd);
             window.location.href = "/render";
         });

@@ -8,23 +8,36 @@
     {% if rows %}
         <table class="table">
             <tr>
-                <th>Audio File</th>
+                <th>File Name</th>
                 <th>Date Created</th>
-                <th></th>
-                <th></th>
             </tr>
             {% for row in rows %}
             <tr>
-                <td><button>Delete</button></td>
                 <td>{{ row["audio_url"] }}</td>
                 <td>{{ row["time"] }}</td>
-                <td><button>Transcribe</button></td>
             </tr>
             {% endfor %}
         </table>
+        <div>
+            <form method=post enctype=multipart/form-data>
+                <input type="file" name="file" id="fileAudio">
+                <input type=submit value="Upload File">
+            </form>
+            <br>
+            <audio id="player1" controls></audio>
+        </div>
+        <script src="{{ url_for('static',filename='main.js') }}"></script>
     {% else %}
-        <p>Id is {{ id }}</p>
-        <p>{{ rows }}</p>
         <h1>You have no saved audio files. Go make one!</h1>
+        <br>
+        <div>
+            <form method=post enctype=multipart/form-data>
+                <input type="file" name="file" id="fileAudio">
+                <input type=submit value="Upload File">
+            </form>
+            <br>
+            <audio id="player1" controls></audio>
+        </div>
+        <script src="{{ url_for('static',filename='main.js') }}"></script>
     {% endif %}
 {% endblock %}

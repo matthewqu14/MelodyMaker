@@ -37,10 +37,6 @@ function handleFileSelect(evt) {
                     );
             }
         })(file);
-        const audio = document.getElementById('midi');
-        const url = "../output/".concat(file.name.slice(0,-8).concat("mid"));
-        console.log(url);
-        audio.src = "../audio2midi/output/mary_1.mid";
         reader.readAsText(file);
     }
 }

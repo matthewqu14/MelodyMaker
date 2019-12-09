@@ -1,6 +1,5 @@
-import re, os
+import re, os, datetime
 
-import sqlite3
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_session import Session
@@ -51,13 +50,12 @@ Session(app)
 
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///users.db")
-db2 = SQL("sqlite:///audio.db")
 db.execute("""CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL,
             hash TEXT NOT NULL,
             confirmation BOOLEAN DEFAULT false);""")
-db2.execute("""CREATE TABLE IF NOT EXISTS audio (
+db.execute("""CREATE TABLE IF NOT EXISTS audio (
                 user_id INTEGER,
                 audio_url TEXT NOT NULL,
                 time DATETIME NOT NULL);""")
@@ -75,44 +73,10 @@ def make_session_permanent():
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part.')
-            return redirect(request.url)
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        if file.filename == '':
-            flash('Please select a file.')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            songname = filename.split('.wav')[0]
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            main('./audio2midi/input/' + filename,
-                 './audio2midi/model/model_melody',
-                 './audio2midi/output/' + songname)
-            os.chdir("./audio2midi/output")
-            subprocess.check_call(
-                [
-                    "C:\\Program Files\\MuseScore 3\\bin\\MuseScore3.exe",
-                    "-o",
-                    songname + ".musicxml",
-                    songname + ".mid"
-                ]
-            )
-            os.chdir("./../..")
-            flash("Audio successfully uploaded")
-            return redirect("/renderr")
-            # return render_template("sheetmusic.html")
-        else:
-            flash("Please select a .wav file.")
-            return redirect("/")
     return render_template("index.html")
 
 
-@app.route("/render", methods=["GET"])
+@app.route("/render")
 @login_required
 def render():
     return render_template("sheetmusic.html")
@@ -174,19 +138,46 @@ def logout():
 @app.route("/myaudio", methods=["GET", "POST"])
 @login_required
 def myaudio():
-    if request.method == "POST":
-        return apology("TODO")
+    now = datetime.datetime.now()
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part.')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            flash('Please select a file.')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            songname = filename.split('.wav')[0]
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            main('./audio2midi/input/' + filename,
+                 './audio2midi/model/model_melody',
+                 './audio2midi/output/' + songname)
+            os.chdir("./audio2midi/output")
+            subprocess.check_call(
+                [
+                    "C:\\Program Files\\MuseScore 3\\bin\\MuseScore3.exe",
+                    "-o",
+                    songname + ".musicxml",
+                    songname + ".mid"
+                ]
+            )
+            os.chdir("./../..")
+            db.execute("INSERT INTO audio (user_id, audio_url, time) VALUES (?, ?, ?)", session['user_id'],
+                       file.filename, now.strftime("%Y-%m-%d %H:%M:%S"))
+            return redirect("/render")
+        else:
+            flash("Please select a .wav file.")
+            return redirect("/myaudio")
     else:
-        db2.execute("INSERT INTO audio (user_id, audio_url) VALUES (?, ?)", session['user_id'],
-                    "C:\\Users\\matth\\Music\\C5")  # this isn't working
-        rows = db2.execute("SELECT * FROM audio WHERE user_id = ?", session['user_id'])
-        return render_template("myaudio.html", rows=rows, id=session['user_id'])
-
-
-@app.route("/mysheet", methods=["GET", "POST"])
-@login_required
-def mysheet():
-    return apology("TODO")
+        rows = db.execute("SELECT * FROM audio WHERE user_id = ?", session['user_id'])
+        filtered_rows = []
+        [filtered_rows.append(row) for row in rows if row not in filtered_rows]
+        return render_template("myaudio.html", rows=filtered_rows, id=session['user_id'])
 
 
 @app.route("/register", methods=["GET", "POST"])
