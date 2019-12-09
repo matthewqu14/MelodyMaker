@@ -1,9 +1,8 @@
-import os
-import requests
-import urllib.parse
-
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, session
 from functools import wraps
+
+# Variables
+ALLOWED_EXTENSIONS = {'wav'}
 
 
 def apology(message):
@@ -23,3 +22,9 @@ def login_required(f):
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
+
+
+def allowed_file(filename):
+    """ Checks to see if file is in an accepted format. """
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS

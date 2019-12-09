@@ -6,6 +6,15 @@
 
 {% block main %}
     {% if rows %}
+        <div>
+            <form method=post enctype=multipart/form-data>
+                <input type="file" name="file" id="fileAudio">
+                <input type=submit value="Upload File">
+            </form>
+            <br>
+            <audio id="player1" controls></audio>
+        </div>
+        <br>
         <table class="table">
             <tr>
                 <th>File Name</th>
@@ -18,14 +27,6 @@
             </tr>
             {% endfor %}
         </table>
-        <div>
-            <form method=post enctype=multipart/form-data>
-                <input type="file" name="file" id="fileAudio">
-                <input type=submit value="Upload File">
-            </form>
-            <br>
-            <audio id="player1" controls></audio>
-        </div>
         <script src="{{ url_for('static',filename='main.js') }}"></script>
     {% else %}
         <h1>You have no saved audio files. Go make one!</h1>
