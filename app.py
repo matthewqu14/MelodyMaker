@@ -49,6 +49,7 @@ Session(app)
 # Configure CS50 Library to use SQLite database
 # Create 2 tables for users and their audio files
 db = SQL("sqlite:///users.db")
+db.execute("DELETE FROM users WHERE username = ?", "muffinmatt8@gmail.com")
 db.execute("""CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL,
